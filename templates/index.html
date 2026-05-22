@@ -3,293 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gauss-Seidel | Numerical Methods</title>
+    <title>Gauss-Seidel | Advanced Calculator</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-body: #f3f4f6;
-            --surface: #ffffff;
-            --text-main: #1f2937;
-            --text-light: #6b7280;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --border: #e5e7eb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --bg-dark: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(56, 189, 248, 0.2);
         }
 
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: var(--bg-body);
+            font-family: 'Inter', sans-serif; 
+            background: radial-gradient(circle at top right, #1e293b, var(--bg-dark));
             color: var(--text-main);
             line-height: 1.6; 
             margin: 0; 
             padding: 40px 20px; 
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        .header-section {
+        .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
-        .tag {
-            background-color: #e0e7ff;
+        .badge {
+            background: rgba(56, 189, 248, 0.1);
             color: var(--accent);
-            padding: 6px 14px;
+            padding: 6px 16px;
             border-radius: 20px;
+            border: 1px solid var(--accent);
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         h1 { 
-            font-size: 2.75rem;
+            font-size: 3rem;
+            margin: 15px 0;
             font-weight: 700;
-            margin: 15px 0 10px 0;
-            color: #111827;
+            background: -webkit-linear-gradient(45deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .card { 
-            background: var(--surface); 
+        .glass-panel { 
+            background: var(--panel-bg); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 16px; 
             border: 1px solid var(--border); 
-            box-shadow: var(--shadow);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             padding: 40px;
             margin-bottom: 30px;
         }
 
-        .calc-card {
-            box-shadow: var(--shadow-lg);
-            border-top: 4px solid var(--accent);
-        }
+        h2 { border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 0; color: #fff;}
+        h3 { color: var(--accent); }
 
-        h2 { 
-            font-size: 1.5rem;
-            color: #111827; 
-            margin-top: 0;
+        .form-control {
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        p { color: var(--text-light); }
-
-        .math-block {
-            background: #f9fafb;
-            border-left: 4px solid var(--accent);
-            padding: 20px;
-            border-radius: 0 8px 8px 0;
-            margin: 20px 0;
-            font-size: 1.1rem;
-            color: #111827;
-        }
-
-        .input-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #374151;
         }
 
         textarea { 
             width: 100%; 
-            height: 120px; 
-            padding: 16px; 
-            font-family: 'Source Code Pro', monospace; 
-            background: #f9fafb;
-            color: #111827;
-            border: 2px solid var(--border);
+            height: 130px; 
+            padding: 15px; 
+            font-family: 'JetBrains Mono', monospace; 
+            background: rgba(15, 23, 42, 0.8);
+            color: #38bdf8;
+            border: 1px solid var(--border);
             border-radius: 8px;
             resize: vertical;
             box-sizing: border-box;
-            transition: all 0.2s ease;
+            font-size: 1rem;
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--accent);
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
+        textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+
+        .btn-group { display: flex; gap: 15px; margin-top: 20px; }
 
         button { 
             background: var(--accent); 
-            color: white; 
+            color: #0f172a; 
             border: none; 
-            padding: 14px 28px; 
+            padding: 12px 24px; 
             font-size: 1rem;
+            font-weight: 700;
             cursor: pointer; 
             border-radius: 8px; 
-            font-weight: 600;
-            transition: background 0.2s, transform 0.1s;
-            margin-top: 20px;
-            width: 100%;
+            transition: all 0.3s ease;
+            flex: 1;
         }
 
-        button:hover { 
-            background: var(--accent-hover); 
-            transform: translateY(-1px);
-        }
+        button:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4); }
         
-        .error { 
-            color: #b91c1c; 
-            background: #fef2f2; 
-            padding: 12px; 
-            border-radius: 6px;
-            border-left: 4px solid #ef4444;
-            font-weight: 500; 
-            margin-top: 20px; 
-        }
-        
-        .results-container {
-            margin-top: 30px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-        }
+        .btn-export { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+        .btn-export:hover { background: rgba(56, 189, 248, 0.1); color: #fff; }
 
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-        }
-        th, td { 
-            border-bottom: 1px solid var(--border); 
-            padding: 14px; 
-            text-align: center; 
-        }
-        th { 
-            background-color: #f1f5f9; 
-            color: #475569; 
-            font-weight: 600; 
-            text-transform: uppercase; 
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-        }
-        tr:last-child td { border-bottom: none; }
+        .error { background: rgba(239, 68, 68, 0.2); border-left: 4px solid #ef4444; padding: 15px; border-radius: 6px; margin-top: 20px; font-weight: 600; color: #fca5a5;}
+
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;}
+        th, td { border: 1px solid rgba(255,255,255,0.1); padding: 12px; text-align: center; }
+        th { background: rgba(0,0,0,0.3); color: var(--accent); text-transform: uppercase; }
+        tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        tr:hover { background: rgba(56, 189, 248, 0.05); }
+
+        .chart-container { margin-top: 40px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; border: 1px solid var(--border); }
         
-        .step-list {
-            background: #f9fafb;
-            padding: 20px 40px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-        .step-list li { margin-bottom: 10px; color: #111827;}
+        .math-box { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent); margin: 15px 0; overflow-x: auto;}
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="header-section">
-            <span class="tag">Linear Algebra - Iterative</span>
-            <h1>Gauss-Seidel Method</h1>
-            <p style="max-width: 600px; margin: 0 auto;">A robust numerical tool for solving systems of linear equations, utilizing immediate updates for faster convergence.</p>
+        <div class="header">
+            <span class="badge">Numerical Methods Final</span>
+            <h1>Gauss-Seidel Optimizer</h1>
+            <p style="color: var(--text-muted); font-size: 1.1rem;">Featuring live convergence plotting and CSV result exporting.</p>
         </div>
 
-        <div class="card calc-card">
-            <h2>Interactive Matrix Calculator</h2>
-            <p>Input your augmented matrix. Separate coefficients and the constant term with commas. Press enter for a new row.</p>
+        <div class="glass-panel">
+            <h2>Interactive Matrix Solver</h2>
+            <p>Input your augmented matrix ($A|b$). Separate coefficients with commas and use a new line for each row.</p>
             
             <form method="POST">
-                <div class="input-group">
-                    <textarea name="matrix" placeholder="Example format:&#10;4, -1, 0, 3&#10;-1, 4, -1, 5&#10;0, -1, 4, 4" required></textarea>
+                <div class="form-control">
+                    <textarea name="matrix" placeholder="4, -1, 0, 3&#10;-1, 4, -1, 5&#10;0, -1, 4, 4" required></textarea>
                 </div>
-                <button type="submit">Execute Computation</button>
+                <div class="btn-group">
+                    <button type="submit">Execute Computation</button>
+                    {% if steps %}
+                    <button type="button" class="btn-export" onclick="exportTableToCSV('gauss_seidel_results.csv')">↓ Export to CSV</button>
+                    {% endif %}
+                </div>
             </form>
 
             {% if error %}
-                <div class="error">{{ error }}</div>
+                <div class="error">⚠️ {{ error }}</div>
             {% endif %}
 
             {% if steps %}
-                <div class="results-container">
-                    <table>
-                        <tr>
-                            <th>Iteration Step</th>
-                            <th>Computed Variables (x₁, x₂, x₃...)</th>
-                        </tr>
-                        {% for step in steps %}
-                        <tr>
-                            <td style="font-weight: 600; color: var(--text-light);">{{ loop.index }}</td>
-                            <td style="font-family: 'Source Code Pro', monospace; color: var(--accent); font-weight: 600;">{{ step | join(', ') }}</td>
-                        </tr>
-                        {% endfor %}
-                    </table>
+                <div class="chart-container">
+                    <canvas id="convergenceChart"></canvas>
                 </div>
+
+                <h3 style="margin-top: 40px;">Iteration Data</h3>
+                <table id="resultsTable">
+                    <tr>
+                        <th>Iter</th>
+                        <th>Computed Vector ($x_1, x_2, ... x_n$)</th>
+                    </tr>
+                    {% for step in steps %}
+                    <tr>
+                        <td style="color: var(--text-muted);">{{ loop.index }}</td>
+                        <td>{{ step | join(', ') }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
             {% endif %}
         </div>
 
-        <div class="card">
+        <div class="glass-panel">
             <h2>Mathematical Framework</h2>
             <p>
-                The Gauss-Seidel method is an iterative technique we use to solve systems of linear equations in the form \( Ax = b \). It is closely related to the Jacobi method but generally achieves convergence with fewer iterations. 
-            </p>
-            <p>
-                The primary distinction is its sequential updating strategy: as soon as we compute a new value for a variable, we immediately substitute it into the equations for the remaining variables within the exact same iteration loop.
+                The Gauss-Seidel method is an iterative technique utilized to solve linear systems in the form $$ Ax = b $$. 
+                Unlike the Jacobi method, which computes all new values using only the previous iteration's data, Gauss-Seidel utilizes the most recently updated values immediately. This "forward substitution" approach generally results in a significantly faster rate of convergence.
             </p>
         </div>
 
-        <div class="card">
+        <div class="glass-panel">
             <h2>Worked Example 1</h2>
-            <p>Let's find the solution for the following linear system:</p>
-            
-            <div class="math-block">
-                \( 4x_1 - x_2 = 3 \) <br>
-                \( -x_1 + 4x_2 - x_3 = 5 \) <br>
-                \( -x_2 + 4x_3 = 4 \)
+            <div class="math-box">
+                $ 4x_1 - x_2 = 3 $ <br>
+                $ -x_1 + 4x_2 - x_3 = 5 $ <br>
+                $ -x_2 + 4x_3 = 4 $
             </div>
-            
-            <p>First, we reorganize the equations to isolate each variable on the left side:</p>
-            <div class="math-block">
-                \( x_1 = \frac{3 + x_2}{4} \) <br><br>
-                \( x_2 = \frac{5 + x_1 + x_3}{4} \) <br><br>
-                \( x_3 = \frac{4 + x_2}{4} \)
+            <p>We isolate each variable, preparing our iterative equations:</p>
+            <div class="math-box">
+                $ x_1 = \frac{3 + x_2}{4} $ <br><br>
+                $ x_2 = \frac{5 + x_1 + x_3}{4} $ <br><br>
+                $ x_3 = \frac{4 + x_2}{4} $
             </div>
-            
-            <p>We initiate the process with a zero vector guess: \( x_1=0, x_2=0, x_3=0 \).</p>
-            <h3 style="color: var(--accent); font-size: 1.1rem; margin-bottom: 10px;">Iteration 1:</h3>
-            <ul class="step-list">
-                <li>\( x_1 = \frac{3 + 0}{4} = 0.75 \)</li>
-                <li>\( x_2 = \frac{5 + 0.75 + 0}{4} = 1.4375 \)</li>
-                <li>\( x_3 = \frac{4 + 1.4375}{4} = 1.359375 \)</li>
-            </ul>
-        </div>
-
-        <div class="card">
-            <h2>Worked Example 2</h2>
-            <p>Let's examine a second system of equations:</p>
-            
-            <div class="math-block">
-                \( 5x_1 + x_2 + 2x_3 = 10 \) <br>
-                \( x_1 + 4x_2 - x_3 = 5 \) <br>
-                \( 2x_1 - x_2 + 5x_3 = 12 \)
-            </div>
-            
-            <p>We isolate our variables exactly as we did before:</p>
-            <div class="math-block">
-                \( x_1 = \frac{10 - x_2 - 2x_3}{5} \) <br><br>
-                \( x_2 = \frac{5 - x_1 + x_3}{4} \) <br><br>
-                \( x_3 = \frac{12 - 2x_1 + x_2}{5} \)
-            </div>
-            
-            <p>Using our initial guess of \( x_1=0, x_2=0, x_3=0 \).</p>
-            <h3 style="color: var(--accent); font-size: 1.1rem; margin-bottom: 10px;">Iteration 1:</h3>
-            <ul class="step-list">
-                <li>\( x_1 = \frac{10 - 0 - 0}{5} = 2.0 \)</li>
-                <li>\( x_2 = \frac{5 - 2.0 + 0}{4} = 0.75 \)</li>
-                <li>\( x_3 = \frac{12 - 2(2.0) + 0.75}{5} = 1.75 \)</li>
+            <p>Using an initial guess of $x^{(0)} = [0, 0, 0]$, we compute Iteration 1:</p>
+            <ul>
+                <li>$ x_1 = \frac{3 + 0}{4} = 0.75 $</li>
+                <li>$ x_2 = \frac{5 + 0.75 + 0}{4} = 1.4375 $</li>
+                <li>$ x_3 = \frac{4 + 1.4375}{4} = 1.359375 $</li>
             </ul>
         </div>
     </div>
+
+    {% if steps %}
+    <script>
+        // --- 1. PLOTTING LOGIC ---
+        // Pass Python list to JavaScript safely
+        const stepsData = {{ steps | tojson }};
+        const numVars = stepsData[0].length;
+        const labels = stepsData.map((_, index) => `Iter ${index + 1}`);
+        
+        // Generate a dynamic color for each line
+        const colors = ['#38bdf8', '#a78bfa', '#f472b6', '#34d399', '#fbbf24'];
+        
+        const datasets = [];
+        for (let i = 0; i < numVars; i++) {
+            datasets.push({
+                label: `x${i + 1}`,
+                data: stepsData.map(step => step[i]),
+                borderColor: colors[i % colors.length],
+                backgroundColor: colors[i % colors.length],
+                tension: 0.3,
+                borderWidth: 2
+            });
+        }
+
+        const ctx = document.getElementById('convergenceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: { labels: labels, datasets: datasets },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: { display: true, text: 'Variable Convergence Over Iterations', color: '#f8fafc', font: { size: 16 } },
+                    legend: { labels: { color: '#94a3b8' } }
+                },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+                }
+            }
+        });
+
+        // --- 2. CSV EXPORT LOGIC ---
+        function exportTableToCSV(filename) {
+            let csv = [];
+            let rows = document.querySelectorAll("table tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length; j++) 
+                    row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+                csv.push(row.join(","));
+            }
+            
+            let csvFile = new Blob([csv.join("\n")], {type: "text/csv"});
+            let downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+        }
+    </script>
+    {% endif %}
 
 </body>
 </html>
