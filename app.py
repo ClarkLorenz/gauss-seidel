@@ -5,7 +5,6 @@ app = Flask(__name__)
 def gauss_seidel(A, b, max_iterations=50, tolerance=1e-5):
     n = len(A)
     x = [0.0] * n 
-    
     steps = []
     
     for iteration in range(max_iterations):
@@ -18,10 +17,8 @@ def gauss_seidel(A, b, max_iterations=50, tolerance=1e-5):
                     sum_val -= A[i][j] * x[j]
             x[i] = sum_val / A[i][i]
             
-        # Record the current step for the frontend
         steps.append([round(val, 5) for val in x])
         
-        # Check if we reached our tolerance level
         error = max(abs(x[i] - x_old[i]) for i in range(n))
         if error < tolerance:
             break
@@ -35,7 +32,6 @@ def index():
     
     if request.method == 'POST':
         try:
-            # Safe parsing: split by lines, then by comma, and strict cast to float
             matrix_text = request.form['matrix'].strip()
             lines = matrix_text.split('\n')
             
