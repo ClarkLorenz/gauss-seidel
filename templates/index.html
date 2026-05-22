@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gauss-Seidel | Advanced Calculator</title>
-    <!-- MathJax for rendering LaTeX -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- Chart.js for Convergence Plotting -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #8b5cf6; /* Vivid Purple */
-            --secondary: #ec4899; /* Bright Pink */
-            --tertiary: #06b6d4; /* Cyan */
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --tertiary: #06b6d4;
             --text-main: #ffffff;
             --text-muted: #cbd5e1;
             --panel-bg: rgba(15, 23, 42, 0.65);
             --panel-border: rgba(255, 255, 255, 0.15);
         }
 
-        /* Animated Aurora Background */
         body { 
             font-family: 'Outfit', sans-serif; 
             color: var(--text-main);
@@ -73,7 +70,6 @@
             text-shadow: 0px 10px 20px rgba(0,0,0,0.2);
         }
 
-        /* Frosted Glass Panels */
         .glass-panel { 
             background: var(--panel-bg); 
             backdrop-filter: blur(20px);
@@ -87,7 +83,6 @@
             overflow: hidden;
         }
 
-        /* Decorative glowing orb inside panels */
         .glass-panel::before {
             content: '';
             position: absolute;
@@ -201,7 +196,7 @@
 
         <div class="glass-panel">
             <h2>Interactive Matrix Solver</h2>
-            <p>Input your augmented matrix ($A|b$). Separate coefficients with commas and use a new line for each row.</p>
+            <p>Input your augmented matrix (\(A|b\)). Separate coefficients with commas and use a new line for each row.</p>
             
             <form method="POST">
                 <textarea name="matrix" placeholder="4, -1, 0, 3&#10;-1, 4, -1, 5&#10;0, -1, 4, 4" required></textarea>
@@ -226,7 +221,7 @@
                 <table id="resultsTable">
                     <tr>
                         <th>Iter</th>
-                        <th>Computed Vector ($x_1, x_2, ... x_n$)</th>
+                        <th>Computed Vector (\(x_1, x_2, ... x_n\))</th>
                     </tr>
                     {% for step in steps %}
                     <tr>
@@ -241,7 +236,7 @@
         <div class="glass-panel">
             <h2>Mathematical Framework</h2>
             <p>
-                The Gauss-Seidel method is an iterative technique utilized to solve linear systems in the form $$ Ax = b $$. 
+                The Gauss-Seidel method is an iterative technique utilized to solve linear systems in the form \( Ax = b \). 
                 Unlike the Jacobi method, which computes all new values using only the previous iteration's data, Gauss-Seidel utilizes the most recently updated values immediately. This "forward substitution" approach generally results in a significantly faster rate of convergence.
             </p>
         </div>
@@ -249,21 +244,42 @@
         <div class="glass-panel">
             <h2>Worked Example 1</h2>
             <div class="math-box">
-                $ 4x_1 - x_2 = 3 $ <br>
-                $ -x_1 + 4x_2 - x_3 = 5 $ <br>
-                $ -x_2 + 4x_3 = 4 $
+                \( 4x_1 - x_2 = 3 \) <br>
+                \( -x_1 + 4x_2 - x_3 = 5 \) <br>
+                \( -x_2 + 4x_3 = 4 \)
             </div>
             <p>We isolate each variable, preparing our iterative equations:</p>
             <div class="math-box">
-                $ x_1 = \frac{3 + x_2}{4} $ <br><br>
-                $ x_2 = \frac{5 + x_1 + x_3}{4} $ <br><br>
-                $ x_3 = \frac{4 + x_2}{4} $
+                \( x_1 = \frac{3 + x_2}{4} \) <br><br>
+                \( x_2 = \frac{5 + x_1 + x_3}{4} \) <br><br>
+                \( x_3 = \frac{4 + x_2}{4} \)
             </div>
-            <p>Using an initial guess of $x^{(0)} = [0, 0, 0]$, we compute Iteration 1:</p>
+            <p>Using an initial guess of \( x^{(0)} = [0, 0, 0] \), we compute Iteration 1:</p>
             <ul style="line-height: 2;">
-                <li>$ x_1 = \frac{3 + 0}{4} = 0.75 $</li>
-                <li>$ x_2 = \frac{5 + 0.75 + 0}{4} = 1.4375 $</li>
-                <li>$ x_3 = \frac{4 + 1.4375}{4} = 1.359375 $</li>
+                <li>\( x_1 = \frac{3 + 0}{4} = 0.75 \)</li>
+                <li>\( x_2 = \frac{5 + 0.75 + 0}{4} = 1.4375 \)</li>
+                <li>\( x_3 = \frac{4 + 1.4375}{4} = 1.359375 \)</li>
+            </ul>
+        </div>
+        
+        <div class="glass-panel">
+            <h2>Worked Example 2</h2>
+            <div class="math-box">
+                \( 5x_1 + x_2 + 2x_3 = 10 \) <br>
+                \( x_1 + 4x_2 - x_3 = 5 \) <br>
+                \( 2x_1 - x_2 + 5x_3 = 12 \)
+            </div>
+            <p>We isolate our variables again:</p>
+            <div class="math-box">
+                \( x_1 = \frac{10 - x_2 - 2x_3}{5} \) <br><br>
+                \( x_2 = \frac{5 - x_1 + x_3}{4} \) <br><br>
+                \( x_3 = \frac{12 - 2x_1 + x_2}{5} \)
+            </div>
+            <p>Using our initial guess of \( x^{(0)} = [0, 0, 0] \), we compute Iteration 1:</p>
+            <ul style="line-height: 2;">
+                <li>\( x_1 = \frac{10 - 0 - 0}{5} = 2.0 \)</li>
+                <li>\( x_2 = \frac{5 - 2.0 + 0}{4} = 0.75 \)</li>
+                <li>\( x_3 = \frac{12 - 2(2.0) + 0.75}{5} = 1.75 \)</li>
             </ul>
         </div>
     </div>
@@ -274,7 +290,6 @@
         const numVars = stepsData[0].length;
         const labels = stepsData.map((_, index) => `Iter ${index + 1}`);
         
-        // Upgraded vivid colors for the chart lines
         const colors = ['#06b6d4', '#ec4899', '#8b5cf6', '#facc15', '#10b981'];
         
         const datasets = [];
